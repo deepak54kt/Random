@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d18">
+  <title>CHASMIS IDENTITY VERIFICATION SYSTEM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <div id="particle-field" aria-hidden="true"></div>
+
+  <main class="console" aria-live="polite">
+    <header class="topbar">
+      <div class="brand-mark"><span class="brand-dot"></span><span>CVS<span class="muted">/09</span></span></div>
+      <div class="connection"><span class="pulse-dot"></span> SECURE LINK <b>●</b></div>
+    </header>
+
+    <section class="hud-meta">
+      <div class="level-readout"><span id="level-label">LEVEL 01 / 09</span><span class="level-name" id="level-name">PLAYER DETECTED</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </section>
+
+    <section id="game-screen" class="game-screen"></section>
+
+    <footer class="footer-bar">
+      <span><span class="keycap">ESC</span> ABORT UNAVAILABLE</span>
+      <span id="footer-status">AWAITING PLAYER INPUT</span>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
