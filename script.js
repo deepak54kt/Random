@@ -7,6 +7,7 @@ const footerStatus = document.querySelector('#footer-status');
 const levelNames = ['PLAYER DETECTED', 'HUMAN VERIFICATION', 'ROASTING TEST', 'FRIENDSHIP DATABASE', 'GAMING HISTORY', 'BIRTHDAY PROTOCOL', 'FINAL SCAN', 'MESSAGE UNLOCKED', 'NAME REGISTRATION'];
 let currentLevel = 1;
 let selectedResponse = null;
+const NAME_SUBMISSION_ENDPOINT = 'https://formspree.io/f/mnpnewzz';
 
 const choices = {
   identity: [
@@ -125,7 +126,38 @@ function showBirthday() {
 function showNameRegistration() {
   setScreen(`<div class="card hero-card"><p class="eyebrow">LEVEL 09 // PROFILE SAVE</p><h2>ONE LAST MYSTERY.</h2><p class="lede">The birthday message has been delivered. The system is ready to save this player as a verified friend...</p><p class="quote"><span class="cyan">What name am I supposed to save you as? 😂</span></p><p class="warning-line">⚠ REAL NAME REQUIRED FOR PROFILE SAVE. REFUSAL WILL RESULT IN IMMEDIATE KICK FROM THE GAME.</p><form class="name-form" id="name-form"><input class="name-input" id="name-input" type="text" maxlength="32" autocomplete="off" placeholder="Enter your real name..."><button class="action-btn" type="submit">SAVE NAME</button></form><div id="save-result"></div></div>`);
   document.querySelector('#name-input').focus();
-  document.querySelector('#name-form').addEventListener('submit', event => { event.preventDefault(); const input = document.querySelector('#name-input'); const name = input.value.trim(); if (!name) { input.placeholder = 'The mystery continues... type something 😭'; input.focus(); return; } document.querySelector('#save-result').innerHTML = `<div class="response"><p>PROFILE SAVED: ${escapeHtml(name.toUpperCase())} ✅</p><p>Alias: CHASMIS. Birthday status: LEGENDARY.</p><p>Thanks for being an absolute menace and a great friend. 😂</p></div>`; input.disabled = true; event.target.querySelector('button').disabled = true; footerStatus.textContent = 'PROFILE SAVED / SESSION COMPLETE'; });
+  document.querySelector('#name-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const input = document.querySelector('#name-input');
+    const submitButton = event.target.querySelector('button');
+    const name = input.value.trim();
+    if (!name) {
+      input.placeholder = 'The mystery continues... type something 😭';
+      input.focus();
+      return;
+    }
+
+    submitButton.disabled = true;
+    if (NAME_SUBMISSION_ENDPOINT) {
+      try {
+        const response = await fetch(NAME_SUBMISSION_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ name })
+        });
+        if (!response.ok) throw new Error('Name submission failed');
+      } catch (error) {
+        submitButton.disabled = false;
+        document.querySelector('#save-result').innerHTML = '<div class="response"><p class="red">NAME COULD NOT BE SENT. PLEASE TRY AGAIN.</p></div>';
+        return;
+      }
+    }
+
+    localStorage.setItem('submittedPlayerName', name);
+    document.querySelector('#save-result').innerHTML = `<div class="response"><p>PROFILE SAVED: ${escapeHtml(name.toUpperCase())} ✅</p><p>Alias: CHASMIS. Birthday status: LEGENDARY.</p><p>Thanks for being an absolute menace and a great friend. 😂</p></div>`;
+    input.disabled = true;
+    footerStatus.textContent = 'PROFILE SAVED / SESSION COMPLETE';
+  });
 }
 
 function escapeHtml(value) { return value.replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
